@@ -1,0 +1,36 @@
+#Normalizing Case Folding
+df['reviewText']=df['reviewText'].str.lower()
+print(df["reviewText"])
+
+#Punctuations
+df['reviewText']=df['reviewText'].str.replace('[^\w\s]','')
+print(df["reviewText"])
+
+#Numbers
+df['reviewText']=df['reviewText'].str.replace('\d','')
+print(df["reviewText"])
+
+#Stop Words
+import nltk
+nltk.download('stopwords')
+from nltk.corpus import stopwords # Import the stopwords module
+sw=stopwords.words('english')
+df['reviewText']=df['reviewText'].astype(str).apply(lambda x:' '.join([word for word in x.split() if word not in (sw)])) # Cast the column to string type
+print(df["reviewText"])
+
+#RareWords
+temp_df=pd.Series(' '.join(df['reviewText']).split()).value_counts()
+drops=temp_df[temp_df<=1]
+df['reviewText']=df['reviewText'].apply(lambda x:' '.join([word for word in x.split() if word not in (drops)]))
+print(df["reviewText"])
+
+#Tokenization
+nltk.download('punkt')
+df['reviewText'] = df['reviewText'].apply(lambda x:TextBlob(x).words)
+print(df["reviewText"])
+
+
+#Lemmatization
+nltk.download('wordnet')
+df['reviewText']=df['reviewText'].apply(lambda x:' '.join([Word(word).lemmatize() for word in x]))
+print(df["reviewText"])
